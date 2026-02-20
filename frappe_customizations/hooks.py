@@ -250,9 +250,23 @@ app_license = "mit"
 # List of apps whose translatable strings should be excluded from this app's translations.
 # ignore_translatable_strings_from = []
 
+# Fixtures: Custom Fields for these doctypes are synced via standard bench.
+# From a site that has the custom fields:
+#   bench --site <site> export-fixtures --app frappe_customizations
+# Then commit fixtures/custom_field.json. Other sites get them via bench migrate.
+# hooks.py
+
+fixture_doctypes_with_custom_fields = ["Leave Type", "Leave Application"]
+
 fixtures = [
+    # Your existing custom fields
     {
         "doctype": "Custom Field",
-        "filters": [["name", "=", "Leave Type-custom_attachments_required"]],
-    }
+        "filters": [["dt", "in", fixture_doctypes_with_custom_fields]],
+    },
+    # Add this — export the child DocType definition itself
+    {
+        "doctype": "DocType",
+        "filters": [["name", "in", ["Leave Supporting Documents"]]],
+    },
 ]
